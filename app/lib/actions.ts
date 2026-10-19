@@ -121,6 +121,33 @@ export async function createTransfer(
 export async function confirmLoan(transferId: number, userId: string) {
   const supabase = await createClient();
 
+  // Verificar que el usuario que confirma pertenece a la tienda receptora (o es admin)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No autenticado.');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('store_id, role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const isSuperUser = user.email === 'michelettimatias@gmail.com' || profile?.role === 'admin';
+
+  if (!isSuperUser) {
+    // Obtener el transfer para verificar la tienda receptora
+    const { data: transfer } = await supabase
+      .from('transfers')
+      .select('receiver_store_id')
+      .eq('id', transferId)
+      .eq('status', 'PENDING_LOAN')
+      .maybeSingle();
+
+    if (!transfer) throw new Error('Préstamo no encontrado o ya confirmado.');
+    if (profile?.store_id !== transfer.receiver_store_id) {
+      throw new Error('Solo la tienda receptora puede confirmar la recepción del préstamo.');
+    }
+  }
+
   const { error } = await supabase
     .from('transfers')
     .update({
@@ -161,6 +188,32 @@ export async function initiateReturn(transferId: number, userId: string) {
 // 2c. Confirmar la recepción de la devolución por parte de la tienda que lo prestó
 export async function confirmReturn(transferId: number, userId: string) {
   const supabase = await createClient();
+
+  // Verificar que el usuario que confirma pertenece a la tienda emisora original (o es admin)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No autenticado.');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('store_id, role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const isSuperUser = user.email === 'michelettimatias@gmail.com' || profile?.role === 'admin';
+
+  if (!isSuperUser) {
+    const { data: transfer } = await supabase
+      .from('transfers')
+      .select('sender_store_id')
+      .eq('id', transferId)
+      .eq('status', 'PENDING_RETURN')
+      .maybeSingle();
+
+    if (!transfer) throw new Error('Devolución no encontrada o ya confirmada.');
+    if (profile?.store_id !== transfer.sender_store_id) {
+      throw new Error('Solo la tienda que prestó el artículo puede confirmar la recepción de la devolución.');
+    }
+  }
 
   const { error } = await supabase
     .from('transfers')

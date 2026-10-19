@@ -112,10 +112,10 @@ export default function MovementsView({
 						const isReturn = t.status === 'PENDING_RETURN';
 
 						// ¿Quién debe confirmar?
-						// En un préstamo nuevo (PENDING_LOAN): confirma la tienda receptora
-						const canConfirmLoan = isSuperUser || (activeStoreId && t.receiver_store_id === activeStoreId);
-						// En una devolución (PENDING_RETURN): confirma la tienda que prestó originalmente
-						const canConfirmReturn = isSuperUser || (activeStoreId && t.sender_store_id === activeStoreId);
+						// En un préstamo nuevo (PENDING_LOAN): solo confirma la tienda receptora
+						const canConfirmLoan = isSuperUser || (userStoreId != null && t.receiver_store_id === userStoreId);
+						// En una devolución (PENDING_RETURN): solo confirma la tienda que prestó originalmente
+						const canConfirmReturn = isSuperUser || (userStoreId != null && t.sender_store_id === userStoreId);
 
 						return (
 							<div
