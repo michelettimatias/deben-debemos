@@ -45,7 +45,7 @@ export default function NewTransferForm({
 		'litros',
 		'gramos',
 	];
-	const [unit, setUnit] = useState();
+	const [unit, setUnit] = useState<string>('');
 
 	// Estados de productos y búsqueda
 	const [products, setProducts] = useState<ProductItem[]>(initialProducts);
@@ -122,36 +122,14 @@ export default function NewTransferForm({
 	);
 
 	const handleSelectProduct = (product: ProductItem) => {
-	console.log(product.units)
 		setSearchTerm(product.name);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	setUnit(product.units.name)
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	setIsSearching(false);
+		const unitName = Array.isArray(product.units)
+			? product.units[0]?.name
+			: (product.units as { name?: string } | null | undefined)?.name;
+		if (unitName) {
+			setUnit(unitName);
+		}
+		setIsSearching(false);
 	};
 
 	const handleOpenNewProductModal = (nameToUse?: string) => {
@@ -477,8 +455,8 @@ export default function NewTransferForm({
 								id="unit"
 								name="unit"
 								value={unit}
-				disabled
-								className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 text-sm transition"
+								readOnly
+								className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 text-sm transition cursor-default"
 							/>
 						</div>
 

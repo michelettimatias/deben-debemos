@@ -301,8 +301,9 @@ export async function createStoreAction(formData: FormData) {
 export type ProductItem = {
   id: number;
   name: string;
-  group: number;
-  units: UnitItem;
+  group?: number | null;
+  product_unit?: number | null;
+  units?: { name: string } | { name: string }[] | null;
 };
 
 export type UnitItem = {
@@ -347,7 +348,7 @@ export async function createProductAction(data: {
   const { data: newProduct, error } = await db
     .from('products')
     .insert(payload)
-    .select('id, name, group, product_unit')
+    .select('id, name, group, product_unit, units(name)')
     .single();
 
   if (error) {
@@ -356,5 +357,5 @@ export async function createProductAction(data: {
 
   revalidatePath('/dashboard');
   revalidatePath('/dashboard/productos');
-  return { success: true, product: newProduct as ProductItem };
+  return { success: true, product: newProduct as unknown as ProductItem };
 }
