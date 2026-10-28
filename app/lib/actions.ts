@@ -302,7 +302,7 @@ export type ProductItem = {
   id: number;
   name: string;
   group: number;
-  units: Object;
+  units: UnitItem;
 };
 
 export type UnitItem = {
