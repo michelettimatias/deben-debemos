@@ -46,7 +46,7 @@ export async function createTransfer(
 
   // Comprobar si es el superusuario administrador
   const isSuperUser =
-    user.email === 'michelettimatias@gmail.com';
+    user.role === 'admin';
 
   // Obtener o asegurar el perfil del usuario en la tabla 'profiles'
   const { data: profile } = await supabase
@@ -131,7 +131,7 @@ export async function confirmLoan(transferId: number, userId: string) {
     .eq('id', user.id)
     .maybeSingle();
 
-  const isSuperUser = user.email === 'michelettimatias@gmail.com' || profile?.role === 'admin';
+  const isSuperUser = profile?.role === 'admin';
 
   if (!isSuperUser) {
     // Obtener el transfer para verificar la tienda receptora
@@ -160,6 +160,56 @@ export async function confirmLoan(transferId: number, userId: string) {
 
   if (error) {
     throw new Error(`Error al confirmar el préstamo: ${error.message}`);
+  }
+
+  revalidatePath('/dashboard');
+  return {
+    success: `Recepción del producto confirmada correctamente.`,
+  };
+}
+
+export async function cancelLoan(transferId: number, userId: string) {
+  const supabase = await createClient();
+
+  // Verificar que el usuario que confirma pertenece a la tienda receptora (o es admin)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('No autenticado.');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('store_id, role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const isSuperUser = profile?.role === 'admin';
+
+  if (!isSuperUser) {
+    // Obtener el transfer para verificar la tienda receptora
+    const { data: transfer } = await supabase
+      .from('transfers')
+      .select('sender_store_id')
+      .eq('id', transferId)
+      .eq('status', 'PENDING_LOAN')
+      .maybeSingle();
+
+    if (!transfer) throw new Error('Préstamo no encontrado o ya confirmado.');
+    if (profile?.store_id !== transfer.sender_store_id) {
+      throw new Error('Solo la tienda que envió el producto puede cancelar la recepción del préstamo.');
+    }
+  }
+
+  const { error } = await supabase
+    .from('transfers')
+    .update({
+      status: 'CANCELLED',
+      updated_at: new Date().toISOString(),
+	  closed_by_user_id: userId,
+    })
+    .eq('id', transferId)
+    .eq('status', 'PENDING_LOAN');
+
+  if (error) {
+    throw new Error(`Error al cancelar el préstamo: ${error.message}`);
   }
 
   revalidatePath('/dashboard');
@@ -251,8 +301,8 @@ export async function createStoreAction(formData: FormData) {
 export type ProductItem = {
   id: number;
   name: string;
-  group?: number | null;
-  product_unit?: number | null;
+  group: number;
+  units: Object;
 };
 
 export type UnitItem = {

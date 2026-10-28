@@ -38,19 +38,17 @@ export default function StorePerspectiveSelector({
   };
 
   return (
-    <div className="flex items-center gap-2">
       <select
         value={selectedValue}
         onChange={handleChange}
         aria-label="Ver movimientos desde la perspectiva de"
-        className="px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 text-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer shadow-sm"
+        className="w-full lg:w-auto px-3 py-2 rounded-md border border-slate-300 bg-white hover:bg-slate-100/80 text-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer shadow-sm"
       >
         {stores.map((s) => (
           <option key={s.id} value={s.id}>
-            {s.name} {s.name.toLowerCase().includes('sagunto') ? '(Tu base: Sagunto)' : ''}
+            {s.name}
           </option>
         ))}
       </select>
-    </div>
   );
 }

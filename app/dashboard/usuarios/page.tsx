@@ -73,15 +73,10 @@ async function UsersContent() {
 
 export default function UsuariosPage() {
   return (
-    <div className="w-full max-h-screen overflow-hidden flex flex-col">
-        <Suspense fallback={<div className="h-24 animate-pulse bg-slate-200/70 rounded-2xl mb-8" />}>
-          <DashboardHeader title='USUARIOS' />
-        </Suspense>
 		<div className='flex flex-col gap-4 p-4 w-full h-full grow-1 overflow-hidden'>
 			<Suspense fallback={<div className="h-72 animate-pulse bg-slate-200/70 rounded-2xl" />}>
 				<UsersContent />
 			</Suspense>
 		</div>
-    </div>
   );
 }

@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { signout } from '@/login/actions';
 import StorePerspectiveSelector from './StorePerspectiveSelector';
+import HeaderLink from './HeaderLink';
 
 export default async function DashboardHeader({ title }: { title: string }) {
 	const supabase = await createClient();
@@ -34,12 +34,11 @@ export default async function DashboardHeader({ title }: { title: string }) {
 	const isProductos = title.toUpperCase().includes('PRODUCTOS');
 
 	return (
-		<header className="p-8 bg-white shadow-lg">
-			<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-				<div className='flex flex-wrap sm:items-center gap-2 text-slate-900'>
-					<h1 className="text-xl font-bold tracking-widest">{title} | <span className='text-blue-500 uppercase'>{profile?.store?.name}</span></h1>
+		<header className="p-4 lg:p-8 bg-white shadow-lg flex flex-col lg:flex-row justify-between gap-4">
+				<div className='flex flex-col lg:flex-row items-center gap-2 text-slate-900'>
+					<h1 className="text-lg lg:text-xl font-bold tracking-wider">{title} | <span className='text-blue-500 uppercase'>{profile?.store?.name}</span></h1>
 					<div className="flex flex-wrap items-center gap-2">
-						<span>|</span>
+						<span className='hidden lg:inline'>|</span>
 						<span className="text-sm text-slate-500">
 						<strong className="text-slate-800">{user?.email}</strong>
 						</span>
@@ -54,53 +53,36 @@ export default async function DashboardHeader({ title }: { title: string }) {
 					</div>
 				</div>
 
-				<div className='flex flex-wrap sm:items-center gap-2'>
+				<div className='flex flex-col lg:flex-row items-center justify-center gap-2'>
 					{isSuperUser && (
-						<nav className="flex flex-wrap items-center gap-2">
+						<>
 							<StorePerspectiveSelector stores={stores} defaultStoreId={defaultStoreId} />
-							<Link
+							<HeaderLink
 								href="/dashboard"
-								className={`px-4 py-2 text-sm rounded-xl transition ${
-									isDashboard
-										? 'font-semibold bg-blue-50 text-blue-700 border border-blue-200/60'
-										: 'font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-								}`}
 							>
-								Préstamos y Movimientos
-							</Link>
-							<Link
+								MOVIMIENTOS
+							</HeaderLink>
+							<HeaderLink
 								href="/dashboard/usuarios"
-								className={`px-4 py-2 text-sm rounded-xl transition ${
-									isUsuarios
-										? 'font-semibold bg-blue-50 text-blue-700 border border-blue-200/60'
-										: 'font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-								}`}
 							>
-								Usuarios de Tienda
-							</Link>
-							<Link
+								USUARIOS
+							</HeaderLink>
+							<HeaderLink
 								href="/dashboard/productos"
-								className={`px-4 py-2 text-sm rounded-xl transition ${
-									isProductos
-										? 'font-semibold bg-blue-50 text-blue-700 border border-blue-200/60'
-										: 'font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-								}`}
 							>
-								Productos y Categorías
-							</Link>
-						</nav>
+								PRODUCTOS
+							</HeaderLink>
+						</>
 					)}
-					<form action={signout}>
+					<form action={signout} className='w-full lg:w-auto'>
 						<button
 							type="submit"
-							className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-red-600 transition shadow-sm"
+							className="w-full lg:w-auto px-4 py-2 text-center text-xs tracking-widest font-bold rounded-md transition text-slate-700 bg-white border border-slate-200 hover:bg-red-700 hover:border-red-700 hover:text-white shadow-sm cursor-pointer"
 						>
-							Cerrar Sesión
+							CERRAR SESIÓN
 						</button>
 					</form>
 				</div>
-
-			</div>
 		</header>
 	);
 }
