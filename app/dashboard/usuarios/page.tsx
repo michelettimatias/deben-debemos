@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import UserList, { UserProfile, Store } from './user-list';
-import DashboardHeader from '@/components/DashboardHeader';
 
 export const instant = false;
 

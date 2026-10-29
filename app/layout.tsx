@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import DashboardHeader from "./components/DashboardHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,18 +17,17 @@ export const metadata: Metadata = {
   description: "Gestion de préstamos entre tiendas.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body>
-		<div className="bg-gray-200 min-h-screen lg:max-h-screen lg:overflow-hidden flex flex-col">
-      <DashboardHeader title="DEBEN / DEBEMOS" />
-			{children}
-		</div>
-	</body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

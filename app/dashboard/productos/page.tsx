@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-import DashboardHeader from '@/components/DashboardHeader';
 import ProductsManagementView from './products-view';
 import { ProductRow, UnitRow, GroupRow } from './actions';
 
