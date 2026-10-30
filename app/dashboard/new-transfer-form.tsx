@@ -198,7 +198,7 @@ export default function NewTransferForm({
 				</h2>
 			</div>
 
-			<div className="bg-white rounded-xl p-6 h-full overflow-y-scroll">
+			<div className="bg-white rounded-xl p-6 h-full overflow-y-auto">
 				{/* Mensajes de feedback del formulario */}
 				{state?.error && (
 					<div className="mb-5 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3">
